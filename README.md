@@ -1,10 +1,10 @@
 # Mi Negocio - Sistema de Gestión de Clientes
 Proyecto técnico para Alquimiasoft
 
-## 🎯 Objetivo
+##  Objetivo
 Desarrollar un servicio REST con Java 8+, Spring Boot y PostgreSQL para gestionar clientes y sus direcciones (matriz y adicionales), cumpliendo con buenas prácticas de desarrollo.
 
-## 🛠️ Tecnologías utilizadas
+##  Tecnologías utilizadas
 - **Java 8**
 - **Spring Boot 2.7.18**
 - **PostgreSQL** (ejecutado con Docker)
@@ -14,7 +14,7 @@ Desarrollar un servicio REST con Java 8+, Spring Boot y PostgreSQL para gestiona
 - **Lombok** (opcional)
 - **Postman** (pruebas de API)
 
-## 🐳 Cómo levantar la base de datos con Docker
+##  Cómo levantar la base de datos con Docker
 
 Ejecuta este comando para iniciar PostgreSQL:
 
