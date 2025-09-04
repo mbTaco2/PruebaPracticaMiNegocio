@@ -1,3 +1,4 @@
+// src/main/java/com/alquimiasoft/minnegocio/repository/ClienteRepository.java
 package com.alquimiasoft.minegocio.repository;
 
 import com.alquimiasoft.minegocio.model.Cliente;
@@ -11,12 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
-
-    boolean existsByNumeroIdentificacion(String numeroIdentificacion);
-
     Optional<Cliente> findByNumeroIdentificacion(String numeroIdentificacion);
 
-    @Query("SELECT c FROM Cliente c WHERE LOWER(c.nombres) LIKE LOWER(CONCAT('%', :query, '%')) " +
-           "OR c.numeroIdentificacion LIKE %:query%")
-    List<Cliente> findByNombresOrNumeroIdentificacionContaining(@Param("query") String query);
+    @Query("SELECT c FROM Cliente c JOIN c.direcciones d WHERE c.nombres LIKE %:query% OR d.direccion LIKE %:query% OR c.numeroIdentificacion LIKE %:query%")
+    List<Cliente> searchByQuery(@Param("query") String query);
 }

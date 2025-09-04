@@ -1,3 +1,4 @@
+// src/main/java/com/alquimiasoft/minnegocio/MiNegocioApplication.java
 package com.alquimiasoft.minegocio;
 
 import org.springframework.boot.SpringApplication;

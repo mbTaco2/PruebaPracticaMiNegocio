@@ -1,6 +1,7 @@
+# src/main/resources/application.yml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/minegocio
+    url: jdbc:postgresql://localhost:5432/minenegocio
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -14,10 +15,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-server:
-  port: 8080
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
