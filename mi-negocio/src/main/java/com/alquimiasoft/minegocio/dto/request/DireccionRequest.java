@@ -6,7 +6,8 @@ public class DireccionRequest {
     private String direccion;
     private boolean matriz;
 
-    // Getters y Setters
+    // === Getters y Setters ===
+
     public String getProvincia() {
         return provincia;
     }
@@ -31,6 +32,7 @@ public class DireccionRequest {
         this.direccion = direccion;
     }
 
+    // ✅ CORRECTO: isMatriz() para boolean
     public boolean isMatriz() {
         return matriz;
     }
