@@ -1,5 +1,7 @@
 package com.alquimiasoft.minegocio.exception;
 
-public class ClienteNotFoundException {
-    
+public class ClienteNotFoundException extends RuntimeException {
+    public ClienteNotFoundException(String message) {
+        super(message);
+    }
 }
