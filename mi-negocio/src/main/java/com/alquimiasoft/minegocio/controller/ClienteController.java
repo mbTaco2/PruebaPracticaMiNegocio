@@ -1,90 +1,63 @@
+// src/main/java/com/alquimiasoft/minnegocio/controller/ClienteController.java
 package com.alquimiasoft.minegocio.controller;
 
-import com.alquimiasoft.minegocio.dto.request.ClienteRequest;
-import com.alquimiasoft.minegocio.dto.request.DireccionRequest;
-import com.alquimiasoft.minegocio.dto.response.ClienteResponse;
-import com.alquimiasoft.minegocio.model.Cliente;
-import com.alquimiasoft.minegocio.model.Direccion;
+import com.alquimiasoft.minegocio.dto.ClienteDTO;
+import com.alquimiasoft.minegocio.dto.DireccionDTO;
 import com.alquimiasoft.minegocio.service.ClienteService;
+import com.alquimiasoft.minegocio.service.exception.ClienteException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/clientes")
+@CrossOrigin
 public class ClienteController {
 
-    private final ClienteService clienteService;
-    public ClienteController(ClienteService clienteService) { this.clienteService = clienteService; }
+    @Autowired
+    private ClienteService clienteService;
 
-    @GetMapping("/buscar")
-    public List<ClienteResponse> buscar(@RequestParam("q") String q) {
-        List<Cliente> lista = clienteService.buscarClientes(q);
-        return lista.stream().map(this::toResponse).collect(Collectors.toList());
+    @GetMapping
+    public ResponseEntity<List<ClienteDTO>> buscarClientes(@RequestParam String query) {
+        List<ClienteDTO> clientes = clienteService.buscarClientes(query);
+        return ResponseEntity.ok(clientes);
     }
 
     @PostMapping
-    public ResponseEntity<ClienteResponse> crear(@RequestBody ClienteRequest request) {
-        Cliente c = clienteService.crearCliente(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(c));
+    public ResponseEntity<ClienteDTO> crearCliente(@RequestBody ClienteDTO clienteDTO) {
+        ClienteDTO cliente = clienteService.crearCliente(clienteDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
 
     @PutMapping("/{id}")
-    public ClienteResponse actualizar(@PathVariable Long id, @RequestBody ClienteRequest request) {
-        return toResponse(clienteService.actualizarCliente(id, request));
+    public ResponseEntity<ClienteDTO> actualizarCliente(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
+        ClienteDTO cliente = clienteService.actualizarCliente(id, clienteDTO);
+        return ResponseEntity.ok(cliente);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarCliente(@PathVariable Long id) {
         clienteService.eliminarCliente(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{clienteId}/direcciones")
-    public ResponseEntity<Void> registrarDireccion(@PathVariable Long clienteId, @RequestBody DireccionRequest req) {
-        clienteService.registrarDireccion(clienteId, req);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @PostMapping("/{id}/direcciones")
+    public ResponseEntity<ClienteDTO> agregarDireccion(@PathVariable Long id, @RequestBody DireccionDTO direccionDTO) {
+        ClienteDTO cliente = clienteService.agregarDireccion(id, direccionDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
 
-    @GetMapping("/{clienteId}/direcciones")
-    public List<ClienteResponse.DireccionResponse> listarDirecciones(@PathVariable Long clienteId) {
-        List<Direccion> dirs = clienteService.obtenerTodasLasDireccionesDelCliente(clienteId);
-        return dirs.stream().map(this::toResponse).collect(Collectors.toList());
+    @GetMapping("/{id}/direcciones")
+    public ResponseEntity<List<DireccionDTO>> listarDirecciones(@PathVariable Long id) {
+        List<DireccionDTO> direcciones = clienteService.listarDirecciones(id);
+        return ResponseEntity.ok(direcciones);
     }
 
-    // ---------- mapeos ----------
-    private ClienteResponse toResponse(Cliente c) {
-        ClienteResponse r = new ClienteResponse();
-        r.setId(c.getId());
-        r.setTipoIdentificacion(c.getTipoIdentificacion().name());
-        r.setNumeroIdentificacion(c.getNumeroIdentificacion());
-        r.setNombres(c.getNombres());
-        r.setCorreo(c.getCorreo());
-        r.setCelular(c.getCelular());
-
-        ClienteResponse.DireccionResponse matriz = null;
-        List<ClienteResponse.DireccionResponse> otras = new ArrayList<>();
-        for (Direccion d : c.getDirecciones()) {
-            ClienteResponse.DireccionResponse dr = toResponse(d);
-            if (d.isMatriz()) matriz = dr;
-            else otras.add(dr);
-        }
-        r.setMatriz(matriz);
-        r.setOtras(otras);
-        return r;
-    }
-
-    private ClienteResponse.DireccionResponse toResponse(Direccion d) {
-        ClienteResponse.DireccionResponse r = new ClienteResponse.DireccionResponse();
-        r.id = d.getId();
-        r.provincia = d.getProvincia();
-        r.ciudad = d.getCiudad();
-        r.direccion = d.getDireccion();
-        r.matriz = d.isMatriz();
-        return r;
+    @ExceptionHandler(ClienteException.class)
+    public ResponseEntity<String> handleClienteException(ClienteException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
